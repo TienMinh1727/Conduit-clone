@@ -1,22 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const profileController = require("../controllers/profileController");
+const ProfileRouter = require("../controllers/profileController");
 const authController = require("../controllers/authController");
 
-router.get(
-  "/:username",
-  authController.checkAuthorizationOptional,
-  profileController.getUser
-);
-router.post(
-  "/:username/follow",
-  authController.checkAuthorization,
-  profileController.followUser
-);
+router.post("/:id/follow", authController.protect, ProfileRouter.follow);
+
 router.delete(
-  "/:username/follow",
-  authController.checkAuthorization,
-  profileController.unfollowUser
+  "/:username/unfollow",
+  authController.protect,
+  ProfileRouter.unfollow
 );
 
 module.exports = router;

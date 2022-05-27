@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false,
+    minlength: [8, "Password must be at least 8 characters long"],
   },
   bio: {
     type: String,
@@ -28,14 +30,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  following: {
-    type: Number,
-    default: 0,
-  },
-  followers: {
-    type: Number,
-    default: 0,
-  },
+  following: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 userSchema.pre("save", function (next) {
@@ -59,4 +65,34 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+userSchema.methods.toProfileJSONFor = function (user) {
+  return {
+    username: this.username,
+    bio: this.bio,
+    image: this.image,
+    admin: this.admin,
+    following: user ? user.checkStatus(this._id, "following") : false,
+  };
+};
+
+userSchema.method({
+  // The type can be favorites or following
+  performAction: function (id, type) {
+    if (this[type].indexOf(id) === -1) {
+      this[type].push(id);
+    }
+    return this.save();
+  },
+  // Unfavorite an article or unfollow a user
+  undoAction: function (id, type) {
+    this[type].remove(id);
+    return this.save();
+  },
+  // Check status of following or favorited
+  checkStatus: function (id, type) {
+    return this[type].some(function (favoriteId) {
+      return favoriteId.toString() === id.toString();
+    });
+  },
+});
 module.exports = mongoose.model("user", userSchema);

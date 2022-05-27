@@ -5,9 +5,11 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
 const usersRouter = require("./routes/users");
 const profilesRouter = require("./routes/profiles");
 const articlesRouter = require("./routes/articles");
+const tagsRouter = require("./routes/tags");
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -30,6 +32,7 @@ app.use(cookieParser());
 app.use("/api/users", usersRouter);
 app.use("/api/profiles", profilesRouter);
 app.use("/api/articles", articlesRouter);
+app.use("/api/tags", tagsRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

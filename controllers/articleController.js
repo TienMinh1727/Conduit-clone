@@ -1,16 +1,8 @@
 const ArticleModel = require("../models/article");
 const factory = require("../controllers/handlerFactory");
 
-const add = factory.createOne(ArticleModel);
-const getOne = factory.getOne(ArticleModel);
-const getAllArticles = factory.getAll(ArticleModel);
-const update = factory.updateOne(ArticleModel);
-const remove = factory.deleteOne(ArticleModel);
-
-module.exports = {
-  add,
-  getOne,
-  getAllArticles,
-  update,
-  remove,
-};
+exports.getAllArticles = factory.getAll(ArticleModel);
+exports.add = factory.createOne(ArticleModel);
+exports.getOne = factory.getOne(ArticleModel);
+exports.update = factory.updateOne(ArticleModel);
+exports.remove = factory.deleteOne(ArticleModel);
