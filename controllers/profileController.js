@@ -1,70 +1,96 @@
-const User = require("../models/user");
-const FollowingModel = require("../models/following");
-const FollowerModel = require("../models/follower");
+const UserModel = require("../models/user");
 const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
+const FollowingModel = require("./../models/following");
+const FollowerModel = require("./../models/follower");
 
-exports.follow = async (req, res, next) => {
+exports.follow = catchAsync(async (req, res, next) => {
+  const username = req.params.username;
+
+  if (!username) return next(new AppError("Please specify username"));
+
+  let otherUserDocument;
   try {
-    const id = new ObjectID(req.params.id);
+    otherUserDocument = await UserModel.findOne({ username });
 
-    // check if the id is a valid one
-    if (!ObjectID.isValid(req.params.id)) {
-      return res.status(404).json({ error: "Invalid ID" });
-    }
+    if (otherUserDocument === null)
+      return next(new AppError(`User with username ${username} not found`));
 
-    // check if your id doesn't match the id of the user you want to follow
-    if (res.user._id === req.params.id) {
-      return res.status(400).json({ error: "You cannot follow yourself" });
-    }
+    if (otherUserDocument._id.toString() === req.user.userId)
+      return next(new AppError("Cannot follow self"));
 
-    // add the id of the user you want to follow in following array
-    const query = {
-      _id: res.user._id,
-      following: { $not: { $elemMatch: { $eq: id } } },
-    };
+    const followingDocument = await FollowingModel.findOneAndUpdate(
+      { _id: req.user.userId },
+      { $addToSet: { followings: otherUserDocument._id } },
+      { upsert: true, new: true }
+    );
 
-    const update = {
-      $addToSet: { following: id },
-    };
+    const followerDocument = await FollowerModel.findOneAndUpdate(
+      { _id: otherUserDocument._id },
+      { $addToSet: { followers: req.user.userId } },
+      { upsert: true, new: true }
+    );
 
-    const updated = await User.updateOne(query, update);
+    await UserModel.findByIdAndUpdate(req.user.userId, {
+      following: followingDocument.followings.length,
+    });
 
-    // add your id to the followers array of the user you want to follow
-    const secondQuery = {
-      _id: id,
-      followers: { $not: { $elemMatch: { $eq: res.user._id } } },
-    };
+    otherUserDocument.followers = followerDocument.followers.length;
+    await otherUserDocument.save();
 
-    const secondUpdate = {
-      $addToSet: { followers: res.user._id },
-    };
-
-    const secondUpdated = await User.updateOne(secondQuery, secondUpdate);
-
-    if (!updated || !secondUpdated) {
-      return res.status(404).json({ error: "Unable to follow that user" });
-    }
-
-    res.status(200).json(update);
+    res.json(getApiResponse(otherUserDocument, true));
   } catch (err) {
-    res.status(400).send({ error: err.message });
+    return next(err);
   }
-};
+});
 
-exports.unfollow = async (req, res, next) => {
+exports.unfollow = catchAsync(async (req, res, next) => {
+  const { username } = req.params;
+
+  if (!username) return next(new AppError("Please specify username"));
+
+  let otherUserDocument;
   try {
-    let whomUnFollowed = await User.findByIdAndUpdate(
-      { _id: req.body.followingId },
-      { $pull: { following: req.body.followerId } }
+    otherUserDocument = await UserModel.findOne({ username });
+
+    if (otherUserDocument === null)
+      return next(new AppError(`User with username ${username} not found`));
+
+    if (otherUserDocument._id.toString() === req.user.userId)
+      return next(new AppError("Cannot unfollow self"));
+
+    const followingDocument = await FollowingModel.findOneAndUpdate(
+      { _id: req.user.userId },
+      { $pull: { followings: otherUserDocument._id } },
+      { upsert: true, new: true }
     );
-    let whoUnFollowedMe = await User.findByIdAndUpdate(
-      { _id: req.body.followerId },
-      { $pull: { followers: req.body.followingId } }
+
+    const followerDocument = await FollowerModel.findOneAndUpdate(
+      { _id: otherUserDocument._id },
+      { $pull: { followers: req.user.userId } },
+      { upsert: true, new: true }
     );
-    return res.status(200).send({ message: "User UnFollow Success" });
-  } catch (e) {
-    return res
-      .status(500)
-      .send({ message: "User UnFollow Failed", data: e.message });
+
+    await UserModel.findByIdAndUpdate(req.user.userId, {
+      following: followingDocument.followings.length,
+    });
+
+    otherUserDocument.followers = followerDocument.followers.length;
+    await otherUserDocument.save();
+
+    res.json(getApiResponse(otherUserDocument, false));
+  } catch (err) {
+    return next(err);
   }
+});
+
+const getApiResponse = (userDocument, following) => {
+  return {
+    profile: {
+      username: userDocument.username,
+      bio: userDocument.bio,
+      image: userDocument.image,
+      following,
+    },
+  };
 };

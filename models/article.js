@@ -8,7 +8,7 @@ const articleSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    slug: { type: String, unique: true },
+    slug: String,
     description: {
       type: String,
       required: true,

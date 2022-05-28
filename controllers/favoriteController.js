@@ -13,33 +13,32 @@ const add = (req, res, next) => {
       articleDocument = document;
       return FavoriteModel.findOne({ article: document._id });
     })
-    .then((document) => {
+    .then(async (document) => {
       if (document === null) {
-        document = new FavoriteModel({
+        const newFavorite = new FavoriteModel({
           article: articleDocument._id,
           users: [req.user.userId],
         });
-        return document.save();
+        try {
+          await newFavorite.save();
+          articleDocument.favoritesCount = 1;
+          articleDocument = await articleDocument.save();
+        } catch (err) {
+          return Promise.reject(err);
+        }
       } else {
-        if (document.users.includes(req.user.userId)) {
-          return Promise.resolve(document);
-        } else {
+        if (!document.users.includes(req.user.userId)) {
           document.users.push(req.user.userId);
-          return document.save();
+          try {
+            await document.save();
+            articleDocument.favoritesCount = document.users.length;
+            articleDocument = await articleDocument.save();
+          } catch (err) {
+            return Promise.reject(err);
+          }
         }
       }
-    })
-    .then((document) => {
-      const currFavoritesCount = document.users.length;
-      if (articleDocument.favoritesCount !== currFavoritesCount) {
-        articleDocument.favoritesCount = currFavoritesCount;
-        return articleDocument.save();
-      } else {
-        return Promise.resolve(articleDocument);
-      }
-    })
-    .then((document) => {
-      return document
+      return articleDocument
         .populate("author", { username: 1, bio: 1, image: 1, _id: 0 })
         .execPopulate();
     })
