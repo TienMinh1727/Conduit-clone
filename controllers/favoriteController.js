@@ -2,11 +2,11 @@ const ArticleModel = require("../models/article");
 const FavoriteModel = require("../models/favorite");
 const AppError = require("../utils/appError");
 
-const add = (req, res, next) => {
-  const { slug } = req.params;
+exports.add = (req, res, next) => {
+  const slug = req.params;
 
   let articleDocument;
-  ArticleModel.findOne({ slug })
+  ArticleModel.findOne(slug)
     .then((document) => {
       if (document === null)
         return Promise.reject(new AppError("Article cannot be found"));
@@ -17,7 +17,7 @@ const add = (req, res, next) => {
       if (document === null) {
         const newFavorite = new FavoriteModel({
           article: articleDocument._id,
-          users: [req.user.userId],
+          users: [req.user._id],
         });
         try {
           await newFavorite.save();
@@ -27,8 +27,8 @@ const add = (req, res, next) => {
           return Promise.reject(err);
         }
       } else {
-        if (!document.users.includes(req.user.userId)) {
-          document.users.push(req.user.userId);
+        if (!document.users.includes(req.user._id)) {
+          document.users.push(req.user._id);
           try {
             await document.save();
             articleDocument.favoritesCount = document.users.length;
@@ -49,11 +49,11 @@ const add = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-const remove = (req, res, next) => {
-  const { slug } = req.params;
+exports.remove = (req, res, next) => {
+  const slug = req.params;
 
   let articleDocument;
-  ArticleModel.findOne({ slug })
+  ArticleModel.findOne(slug)
     .then((document) => {
       if (document === null)
         return Promise.reject(new AppError("Article cannot be found"));
@@ -62,9 +62,9 @@ const remove = (req, res, next) => {
     })
     .then(async (document) => {
       if (document !== null) {
-        if (document.users.includes(req.user.userId)) {
+        if (document.users.includes(req.user._id)) {
           document.users = document.users.filter(
-            (item) => item.toString() !== req.user.userId
+            (item) => item.toString() !== req.user._id
           );
           try {
             await document.save();
@@ -84,9 +84,4 @@ const remove = (req, res, next) => {
       res.json({ article: document });
     })
     .catch((err) => next(err));
-};
-
-module.exports = {
-  add,
-  remove,
 };
