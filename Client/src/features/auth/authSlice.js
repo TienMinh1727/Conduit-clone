@@ -12,29 +12,6 @@ import {
   Status,
 } from '../../common/utils';
 
-/**
- * @typedef {object} User
- * @property {string} email
- * @property {string} username
- * @property {string} bio
- * @property {string} image
- *
- *
- * @typedef {object} AuthState
- * @property {Status} status
- * @property {string} token
- * @property {User}   user
- * @property {Record<string, string[]>} errors
- */
-
-/**
- * Send a register request
- *
- * @param {object} argument
- * @param {string} argument.username
- * @param {string} argument.email
- * @param {string} argument.password
- */
 export const register = createAsyncThunk(
   'auth/register',
   async ({ username, email, password }, thunkApi) => {
@@ -57,13 +34,6 @@ export const register = createAsyncThunk(
   }
 );
 
-/**
- * Send a login request
- *
- * @param {object} argument
- * @param {string} argument.email
- * @param {string} argument.password
- */
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, thunkApi) => {
@@ -86,9 +56,6 @@ export const login = createAsyncThunk(
   }
 );
 
-/**
- * Send a get current user request
- */
 export const getUser = createAsyncThunk(
   'auth/getUser',
   async () => {
@@ -103,16 +70,6 @@ export const getUser = createAsyncThunk(
   }
 );
 
-/**
- * Send a update user request
- *
- * @param {object} argument
- * @param {string} argument.email
- * @param {string} argument.username
- * @param {string} argument.bio
- * @param {string} argument.image
- * @param {string} argument.password
- */
 export const updateUser = createAsyncThunk(
   'auth/updateUser',
   async ({ email, username, bio, image, password }, thunkApi) => {
@@ -136,17 +93,10 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-/**
- * @type {AuthState}
- */
 const initialState = {
   status: Status.IDLE,
 };
 
-/**
- * @param {import('@reduxjs/toolkit').Draft<AuthState>} state
- * @param {import('@reduxjs/toolkit').PayloadAction<{token: string, user: User}>} action
- */
 function successReducer(state, action) {
   state.status = Status.SUCCESS;
   state.token = action.payload.token;
@@ -158,16 +108,8 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    /**
-     * Log out the user
-     */
     logout: () => initialState,
-    /**
-     * Update token
-     *
-     * @param {import('@reduxjs/toolkit').Draft<AuthState>} state
-     * @param {import('@reduxjs/toolkit').PayloadAction<string>} action
-     */
+
     setToken(state, action) {
       state.token = action.payload;
     },
@@ -193,45 +135,15 @@ const authSlice = createSlice({
 
 export const { setToken, logout } = authSlice.actions;
 
-/**
- * Get auth slice
- *
- * @param {object} state
- * @returns {AuthState}
- */
 const selectAuthSlice = (state) => state.auth;
 
-/**
- * Get current user
- *
- * @param {object} state
- * @returns {User}
- */
 export const selectUser = (state) => selectAuthSlice(state).user;
 
-/**
- * Get errors
- *
- * @param {object} state
- * @returns {Record<string, string[]}
- */
 export const selectErrors = (state) => selectAuthSlice(state).errors;
 
-/**
- * Get is loading
- *
- * @param {object} state
- * @returns {boolean} There are pending effects
- */
 export const selectIsLoading = (state) =>
   selectAuthSlice(state).status === Status.LOADING;
 
-/**
- * Get is authenticated
- *
- * @param {object} state
- * @returns {boolean}
- */
 export const selectIsAuthenticated = createSelector(
   (state) => selectAuthSlice(state).token,
   selectUser,

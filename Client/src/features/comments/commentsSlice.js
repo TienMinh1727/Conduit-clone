@@ -9,26 +9,10 @@ import agent from '../../agent';
 import { isApiError, loadingReducer, Status } from '../../common/utils';
 import { selectIsAuthenticated, selectUser } from '../auth/authSlice';
 
-/**
- * @typedef  {object}   CommentsState
- * @property {Status}   status
- * @property {number[]} ids
- * @property {Record<string, import('../../agent').Comment>} entities
- * @property {Record<string, string[]>} errors
- */
-
 const commentAdapter = createEntityAdapter({
   sortComparer: (a, b) => b.createdAt.localeCompare(a.createdAt),
 });
 
-/**
- * Send a create request
- *
- * @param {object} argument
- * @param {string} argument.articleSlug
- * @param {object} argument.comment
- * @param {string} argument.comment.body
- */
 export const createComment = createAsyncThunk(
   'comments/createComment',
   async ({ articleSlug, comment: newComment }, thunkApi) => {
@@ -51,11 +35,6 @@ export const createComment = createAsyncThunk(
   }
 );
 
-/**
- * Send a get all request
- *
- * @param {string} articleSlug
- */
 export const getCommentsForArticle = createAsyncThunk(
   'comments/getCommentsForArticle',
   async (articleSlug) => {
@@ -68,13 +47,6 @@ export const getCommentsForArticle = createAsyncThunk(
   }
 );
 
-/**
- * Send a remove request
- *
- * @param {object} argument
- * @param {string} argument.articleSlug
- * @param {number} argument.commentId
- */
 export const removeComment = createAsyncThunk(
   'comments/removeComment',
   async ({ articleSlug, commentId }) => {
@@ -88,9 +60,6 @@ export const removeComment = createAsyncThunk(
   }
 );
 
-/**
- * @type {CommentsState}
- */
 const initialState = commentAdapter.getInitialState({
   status: Status.IDLE,
 });
@@ -145,39 +114,15 @@ const commentsSlice = createSlice({
   },
 });
 
-/**
- * Get comments state
- *
- * @param {object} state
- * @returns {CommentsState}
- */
 const selectCommentsSlice = (state) => state.comments;
 
 const commentSelectors = commentAdapter.getSelectors(selectCommentsSlice);
 
-/**
- * Get all comments
- *
- * @param {object} state
- * @returns {import('../../agent').Comment[]}
- */
 export const selectAllComments = commentSelectors.selectAll;
 
-/**
- * Get one comment
- *
- * @param {number} commentId
- * @returns {import('@reduxjs/toolkit').Selector<object, import('../../agent').Comment>}
- */
 const selectCommentById = (commentId) => (state) =>
   commentSelectors.selectById(state, commentId);
 
-/**
- * Get is the comment's author
- *
- * @param {number} commentId
- * @returns {import('@reduxjs/toolkit').Selector<object, boolean>}
- */
 export const selectIsAuthor = (commentId) =>
   createSelector(
     selectCommentById(commentId),
@@ -185,21 +130,9 @@ export const selectIsAuthor = (commentId) =>
     (comment, currentUser) => currentUser?.username === comment?.author.username
   );
 
-/**
- * Get is loading
- *
- * @param {object} state
- * @returns {boolean}
- */
 export const selectIsLoading = (state) =>
   selectCommentsSlice(state).status === Status.LOADING;
 
-/**
- * Get is errors
- *
- * @param {object} state
- * @returns {Record<string, string[]>}
- */
 export const selectErrors = (state) => selectCommentsSlice(state).errors;
 
 export default commentsSlice.reducer;

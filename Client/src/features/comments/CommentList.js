@@ -10,22 +10,12 @@ import {
   selectIsLoading,
 } from './commentsSlice';
 
-/**
- * Delete a comment
- *
- * @param {object}  props
- * @param {number}  props.commentId
- * @example
- * <DeleteCommentButton commentId={1} />
- */
 function DeleteCommentButton({ commentId }) {
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
   const { slug } = useParams();
 
-  /**
-   * @type {React.MouseEventHandler<HTMLButtonElement>}
-   */
+  
   const deleteComment = () => {
     dispatch(removeComment({ articleSlug: slug, commentId }));
   };
@@ -42,26 +32,6 @@ function DeleteCommentButton({ commentId }) {
   );
 }
 
-/**
- *
- * @param {object} props
- * @param {import('../../agent').Comment} props.comment
- * @example
- * <Comment
- *    comment={{
- *      id: 1,
- *      createdAt: "2016-02-18T03:22:56.637Z",
- *      updatedAt: "2016-02-18T03:22:56.637Z",
- *      body: "It takes a Jacobian",
- *      author: {
- *        username: "jake",
- *        bio: "I work at statefarm",
- *        image: "https://i.stack.imgur.com/xHWG8.jpg",
- *        following: false,
- *      },
- *    }}
- * />
- */
 function Comment({ comment }) {
   const isAuthor = useSelector(selectIsAuthor(comment.id));
 
@@ -95,12 +65,7 @@ function Comment({ comment }) {
   );
 }
 
-/**
- * List all comments of an article
- *
- * @example
- * <CommentList />
- */
+
 function CommentList() {
   const dispatch = useDispatch();
   const comments = useSelector(selectAllComments);

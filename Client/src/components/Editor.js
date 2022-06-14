@@ -10,12 +10,6 @@ import {
 } from '../reducers/article';
 import { useNavigate, useParams } from 'react-router';
 
-/**
- * Editor component
- * @param {import('react-router-dom').RouteComponentProps<{ slug?: string }>} props
- * @example
- * <Editor />
- */
 function Editor({ match }) {
   const dispatch = useDispatch();
   const { article, errors, inProgress } = useSelector((state) => state.article);
@@ -26,37 +20,23 @@ function Editor({ match }) {
   const [tagInput, setTagInput] = useState('');
   const [tagList, setTagList] = useState([]);
   const navigate = useNavigate();
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
+
   const changeTitle = (event) => {
     setTitle(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeDescription = (event) => {
     setDescription(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLAreaElement>}
-   */
   const changeBody = (event) => {
     setBody(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeTagInput = (event) => {
     setTagInput(event.target.value);
   };
 
-  /**
-   * Reset the form values
-   */
   const reset = () => {
     if (slug && article) {
       setTitle(article.title);
@@ -72,10 +52,6 @@ function Editor({ match }) {
     }
   };
 
-  /**
-   * Add a tag to tagList
-   * @type {React.KeyboardEventHandler<HTMLInputElement>}
-   */
   const addTag = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -87,19 +63,10 @@ function Editor({ match }) {
     }
   };
 
-  /**
-   * Remove a tag from tagList
-   *
-   * @param {String} tag
-   * @returns {React.MouseEventHandler}
-   */
   const removeTag = (tag) => () => {
     setTagList(tagList.filter((_tag) => _tag !== tag));
   };
 
-  /**
-   * @type {React.MouseEventHandler<HTMLButtonElement>}
-   */
   const submitForm = (event) => {
     event.preventDefault();
     const article = {

@@ -1,13 +1,5 @@
 import React, { memo } from 'react';
 
-/**
- * List article's tags
- *
- * @param {object}   props
- * @param {string[]} props.tags
- * @example
- * <TagsList tags={['dragons', 'training']} />
- */
 function TagsList({ tags }) {
   return (
     <ul className="tag-list">

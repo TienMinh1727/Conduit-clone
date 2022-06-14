@@ -4,12 +4,6 @@ import { useSelector } from 'react-redux';
 import ArticlePreview from './ArticlePreview';
 import ListPagination from './ListPagination';
 
-/**
- * List all articles and show pagination
- *
- * @example
- * <ArticleList />
- */
 function ArticleList() {
   const articles = useSelector((state) => state.articleList.articles);
 

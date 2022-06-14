@@ -4,12 +4,6 @@ import { useSelector } from 'react-redux';
 
 import { selectIsAuthenticated, selectUser } from '../features/auth/authSlice';
 
-/**
- * Navbar when there isn't a logged user
- *
- * @example
- * <LoggedOutNavbar />
- */
 function LoggedOutNavbar() {
   return (
     <ul className="nav navbar-nav pull-xs-right">
@@ -34,12 +28,6 @@ function LoggedOutNavbar() {
   );
 }
 
-/**
- * Navbar when there is a logged user
- *
- * @example
- * <LoggedInNavbar />
- */
 function LoggedInNavbar() {
   const currentUser = useSelector(selectUser);
 
@@ -82,12 +70,6 @@ function LoggedInNavbar() {
   );
 }
 
-/**
- * App header
- *
- * @example
- * <Header />
- */
 function Header() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const appName = useSelector((state) => state.common.appName);

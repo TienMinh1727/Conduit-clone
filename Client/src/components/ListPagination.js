@@ -3,12 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getAllArticles } from '../reducers/articleList';
 
-/**
- * Show a list with the available pages
- *
- * @example
- * <ListPagination />
- */
 function ListPagination() {
   const dispatch = useDispatch();
   const articlesCount = useSelector((state) => state.articleList.articlesCount);

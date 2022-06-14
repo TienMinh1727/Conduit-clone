@@ -14,12 +14,6 @@ import {
 } from '../reducers/profile';
 import { selectUser } from '../features/auth/authSlice';
 
-/**
- * Go to profile settings
- *
- * @example
- * <EditProfileSettings />
- */
 function EditProfileSettings() {
   return (
     <Link
@@ -31,15 +25,6 @@ function EditProfileSettings() {
   );
 }
 
-/**
- * Follow or unfollow an user
- *
- * @param {Object} props
- * @param {String} props.username
- * @param {Boolean} props.following
- * @example
- * <FollowUserButton username="warren_boyd" following />
- */
 function FollowUserButton({ username, following }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -77,21 +62,6 @@ function FollowUserButton({ username, following }) {
   );
 }
 
-/**
- * Show the profile of an user
- *
- * @param {Object} props
- * @param {Object} props.profile
- * @example
- * <UserInfo profile={{
- *      username: 'warren_boyd',
- *      email: 'warren.boyd@mailinator.com',
- *      image: 'https://static.productionready.io/images/smiley-cyrus.jpg',
- *      bio: null,
- *      following: false,
- *    }}
- * />
- */
 function UserInfo({ profile }) {
   const currentUser = useSelector(selectUser);
   const isCurrentUser = profile.username === currentUser?.username;
@@ -127,15 +97,6 @@ function UserInfo({ profile }) {
   );
 }
 
-/**
- * Profile's navigation
- *
- * @param {Object}  props
- * @param {String}  props.username
- * @param {Boolean} props.isFavorites
- * @example
- * <ProfileTabs username="warren_boyd" isFavorites />
- */
 function ProfileTabs({ username, isFavorites }) {
   return (
     <div className="articles-toggle">
@@ -162,12 +123,6 @@ function ProfileTabs({ username, isFavorites }) {
   );
 }
 
-/**
- * Profile screen component
- * @param {import('react-router-dom').RouteComponentProps<{ username: string }>} props
- * @example
- * <Profile />
- */
 function Profile({ location, isFavoritePage }) {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.profile);

@@ -12,23 +12,6 @@ import {
   updateUser,
 } from './authSlice';
 
-/**
- * Settings form component
- *
- * @param {Object} props
- * @param {import('./authSlice').User} props.currentUser
- * @param {(user: Partial<import('./authSlice').User>) => Promise<any>} props.onSaveSettings
- * @example
- * <SettingsForm
- *    currentUser={{
- *      username: 'warren_boyd',
- *      email: 'warren.boyd@mailinator.com',
- *      image: 'https://static.productionready.io/images/smiley-cyrus.jpg',
- *      bio: null,
- *    }}
- *    onSaveSettings={user => dispatch(updateUser(user))}
- * />
- */
 function SettingsForm({ currentUser, onSaveSettings }) {
   const [image, setImage] = useState(
     currentUser?.image ??
@@ -40,44 +23,26 @@ function SettingsForm({ currentUser, onSaveSettings }) {
   const [password, setPassword] = useState('');
   const isLoading = useSelector(selectIsLoading);
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeImage = (event) => {
     setImage(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeUsername = (event) => {
     setUsername(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeBio = (event) => {
     setBio(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changeEmail = (event) => {
     setEmail(event.target.value);
   };
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLInputElement>}
-   */
   const changePassword = (event) => {
     setPassword(event.target.value);
   };
 
-  /**
-   * @type {React.FormEventHandler<HTMLFormElement>}
-   */
   const saveSettings = (event) => {
     event.preventDefault();
 
@@ -163,12 +128,6 @@ function SettingsForm({ currentUser, onSaveSettings }) {
   );
 }
 
-/**
- * Settings screen component
- *
- * @example
- * <SettingsScreen />
- */
 function SettingsScreen() {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);

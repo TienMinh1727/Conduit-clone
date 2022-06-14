@@ -8,12 +8,6 @@ import TagsList from '../features/tags/TagsList';
 const FAVORITED_CLASS = 'btn btn-sm btn-primary';
 const NOT_FAVORITED_CLASS = 'btn btn-sm btn-outline-primary';
 
-/**
- * Show a preview of an article
- *
- * @param {Object} props
- * @param {Object} props.article
- */
 function ArticlePreview({ article }) {
   const dispatch = useDispatch();
   const favoriteButtonClass = article.favorited

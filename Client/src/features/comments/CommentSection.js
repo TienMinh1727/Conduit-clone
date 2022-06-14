@@ -7,28 +7,16 @@ import { selectIsAuthenticated, selectUser } from '../auth/authSlice';
 import CommentList from './CommentList';
 import { createComment, selectErrors } from './commentsSlice';
 
-/**
- * Add comment
- *
- * @example
- * <CommentForm />
- */
 function CommentForm() {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const { slug } = useParams();
   const [body, setBody] = useState('');
 
-  /**
-   * @type {React.ChangeEventHandler<HTMLTextAreaElement>}
-   */
   const changeBody = (event) => {
     setBody(event.target.value);
   };
 
-  /**
-   * @type {React.FormEventHandler<HTMLFormElement>}
-   */
   const saveComment = (event) => {
     event.preventDefault();
     dispatch(createComment({ articleSlug: slug, comment: { body } }));
@@ -64,12 +52,6 @@ function CommentForm() {
   );
 }
 
-/**
- * Comments for an article
- *
- * @example
- * <CommentSection />
- */
 function CommentSection() {
   const isAuthenticaded = useSelector(selectIsAuthenticated);
   const errors = useSelector(selectErrors);
